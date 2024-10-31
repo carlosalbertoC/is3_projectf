@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Container, Alert, MenuItem } from '@mui/material';
+import { TextField, Button, Box, Typography, Container, Alert } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -13,6 +14,7 @@ const Register = () => {
   const [nationality, setNationality] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const handleRegister = async (event) => {
     event.preventDefault();
@@ -20,7 +22,6 @@ const Register = () => {
     setSuccess(false);
 
     try {
-      // Llamada a la API de registro del backend
       const response = await axios.post('http://localhost:8080/api/auth/register', {
         username,
         email,
@@ -29,15 +30,16 @@ const Register = () => {
         lastName,
         dateOfBirth,
         gender,
-        nationality
+        nationality,
       });
 
-      // Si el registro es exitoso
       if (response.data.token) {
         setSuccess(true);
+        // Redirigir a la vista de agregar información de contacto
+        navigate('/add-contact-info'); // Cambia la ruta según sea necesario
       }
     } catch (err) {
-      setError('Error during registration. Please check your input.');
+      setError('Error al registrarse');
     }
   };
 
@@ -55,96 +57,18 @@ const Register = () => {
           Register
         </Typography>
         <Box component="form" onSubmit={handleRegister} sx={{ mt: 1 }}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Date of Birth"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            select
-            label="Gender"
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-          >
-            <MenuItem value="MALE">Male</MenuItem>
-            <MenuItem value="FEMALE">Female</MenuItem>
-            <MenuItem value="OTHER">Other</MenuItem>
-          </TextField>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Nationality"
-            value={nationality}
-            onChange={(e) => setNationality(e.target.value)}
-          />
+          {/* Campos de registro */}
+          <TextField variant="outlined" margin="normal" required fullWidth label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="Date of Birth" type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} />
+          <TextField variant="outlined" margin="normal" required fullWidth label="Nationality" value={nationality} onChange={(e) => setNationality(e.target.value)} />
           {error && <Alert severity="error">{error}</Alert>}
           {success && <Alert severity="success">Registration successful!</Alert>}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 3, mb: 2 }}
-          >
+          <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 3, mb: 2 }}>
             Register
           </Button>
         </Box>
