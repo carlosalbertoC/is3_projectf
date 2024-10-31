@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Container, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import axios from 'axios';
 
 const Login = () => {
+  const navigate = useNavigate(); // Inicializa useNavigate
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,18 +16,19 @@ const Login = () => {
     setSuccess(false);
 
     try {
-      // Simulate API call to JSON Server
-      const response = await axios.get(`http://localhost:5000/usuarios?email=${email}&password=${password}`);
+      // Llamada a la API de autenticación del backend
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        username: email,
+        password: password,
+      });
       
-      if (response.data.length > 0) {
-        // User found, login successful
+      // Si el login es exitoso, guarda el token en el almacenamiento local
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
         setSuccess(true);
-      } else {
-        // User not found
-        setError('Invalid email or password');
       }
     } catch (err) {
-      setError('Error connecting to the server');
+      setError('Invalid email or password');
     }
   };
 
@@ -75,6 +78,14 @@ const Login = () => {
             sx={{ mt: 3, mb: 2 }}
           >
             Login
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            color="secondary"
+            onClick={() => navigate('/register')} // Redirige a la página de registro
+          >
+            Registrarse
           </Button>
         </Box>
       </Box>
